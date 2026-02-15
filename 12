@@ -1,0 +1,8 @@
+apt update && apt upgrade -y
+sudo su
+sudo apt install tpm2-tools -y
+sudo tpm2_clear
+sudo tpm2_createprimary -C o -c /tmp/p.ctx >/dev/null 2>&1
+sudo tpm2_create -C /tmp/p.ctx -G rsa -u /tmp/k.pub -r /tmp/k.priv -c /tmp/k.ctx >/dev/null 2>&1
+sudo tpm2_readpublic -c /tmp/k.ctx -f pem | sha256sum | cut -d' ' -f1
+sudo tpm2_evictcontrol -C o -c /tmp/k.ctx 0x81010001
